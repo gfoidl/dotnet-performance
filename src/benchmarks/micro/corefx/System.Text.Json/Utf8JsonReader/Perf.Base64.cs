@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using MicroBenchmarks;
+using Newtonsoft.Json;
 
 namespace System.Text.Json.Reader.Tests
 {
@@ -53,11 +54,25 @@ namespace System.Text.Json.Reader.Tests
         [Benchmark]
         public byte[] ReadBase64EncodedByteArray_HeavyEscaping() => ReadBase64EncodedByteArrayCore(_base64HeavyEscaping);
 
+        [Benchmark]
+        public byte[] ReadBase64EncodedByteArray_NoEscaping_JsonNet() => ReadBase64EncodedByteArrayCore_JsonNet(_base64NoEscaping);
+
+        [Benchmark]
+        public byte[] ReadBase64EncodedByteArray_HeavyEscaping_JsonNet() => ReadBase64EncodedByteArrayCore_JsonNet(_base64HeavyEscaping);
+
         private byte[] ReadBase64EncodedByteArrayCore(ReadOnlySpan<byte> base64)
         {
             var json = new Utf8JsonReader(base64, true, default);
             json.Read();
             return json.GetBytesFromBase64();
+        }
+
+        private byte[] ReadBase64EncodedByteArrayCore_JsonNet(byte[] base64)
+        {
+            var memoryStream = new MemoryStream(base64);
+            var sr = new StreamReader(memoryStream);
+            var json = new JsonTextReader(sr);
+            return json.ReadAsBytes();
         }
     }
 }

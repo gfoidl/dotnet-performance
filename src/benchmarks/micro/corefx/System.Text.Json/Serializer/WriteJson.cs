@@ -7,6 +7,7 @@ using MicroBenchmarks;
 using MicroBenchmarks.Serializers;
 using System.IO;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace System.Text.Json.Serialization.Tests
 {
@@ -35,15 +36,7 @@ namespace System.Text.Json.Serialization.Tests
 
         [BenchmarkCategory(Categories.CoreFX, Categories.JSON)]
         [Benchmark]
-        public byte[] SerializeToUtf8Bytes() => JsonSerializer.ToUtf8Bytes(_value);
-
-        [BenchmarkCategory(Categories.CoreFX, Categories.JSON)]
-        [Benchmark]
-        public async Task SerializeToStream()
-        {
-            _memoryStream.Position = 0;
-            await JsonSerializer.WriteAsync(_memoryStream, _value);
-        }
+        public string SerializeToString_JsonNet() => JsonConvert.SerializeObject(_value);
 
         [GlobalCleanup]
         public void Cleanup() => _memoryStream.Dispose();
