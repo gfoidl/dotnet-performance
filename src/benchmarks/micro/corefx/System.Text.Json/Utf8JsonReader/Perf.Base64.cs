@@ -69,10 +69,12 @@ namespace System.Text.Json.Reader.Tests
 
         private byte[] ReadBase64EncodedByteArrayCore_JsonNet(byte[] base64)
         {
-            var memoryStream = new MemoryStream(base64);
-            var sr = new StreamReader(memoryStream);
-            var json = new JsonTextReader(sr);
-            return json.ReadAsBytes();
+            using (var memoryStream = new MemoryStream(base64))
+            using (var sr = new StreamReader(memoryStream))
+            using (var json = new JsonTextReader(sr))
+            {
+                return json.ReadAsBytes();
+            }
         }
     }
 }

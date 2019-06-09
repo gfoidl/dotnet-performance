@@ -50,9 +50,11 @@ namespace System.Text.Json.Tests
         private void WriteByteArrayAsBase64Core(byte[] data)
         {
             _memoryStream.Position = 0;
-            var json = new Utf8JsonWriter(_memoryStream);
-            json.WriteBase64StringValue(data);
-            json.Flush();
+            using (var json = new Utf8JsonWriter(_memoryStream))
+            {
+                json.WriteBase64StringValue(data);
+                json.Flush();
+            }
         }
 
         private void WriteByteArrayAsBase64Core_JsonNet(byte[] data)
@@ -60,6 +62,7 @@ namespace System.Text.Json.Tests
             _memoryStream.Position = 0;
             var sw = new StreamWriter(_memoryStream);
             var json = new JsonTextWriter(sw);
+
             json.WriteValue(data);
             json.Flush();
         }
