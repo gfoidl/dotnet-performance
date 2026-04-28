@@ -25,31 +25,14 @@ namespace System.Memory
         public static IEnumerable<object> LengthValues()
         {
             // The values for the length take into account the different cut-offs
-            // in the vectorized pathes.
+            // in the vectorized paths.
+            int V = Vector<T>.Count;
 
-            if (typeof(T) == typeof(byte))
-            {
-                // Vectorization is done on 2 * Vector<byte>.Count => 64 byte elements
-                yield return 63;    // one less the vectorization threshould
-                yield return 64;    // exactly two vectorized operations
-                yield return 65;    // one element more than standard vectorized loop
-                yield return 95;    // one element less than another iteration of the standard vectorized loop
-                yield return 100;
-            }
-            else if (typeof(T) == typeof(char))
-            {
-                // Vectorization is done on 2 * Vector<char>.Count => 32 char elements
-                // Values analogous to the byte values above
-                yield return 31;
-                yield return 32;
-                yield return 33;
-                yield return 47;
-                yield return 100;
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
+            yield return 2 * V - 1;    // one less than the vectorization threshold
+            yield return 2 * V;        // exactly two vectorized operations
+            yield return 2 * V + 1;    // one element more than standard vectorized loop
+            yield return 3 * V - 1;    // one element less than another iteration of the standard vectorized loop
+            yield return 100;
         }
 
         [GlobalSetup]
